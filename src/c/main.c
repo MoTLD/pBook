@@ -45,15 +45,15 @@
 	
 //Config this to fit your needs. 
 // Remember to add the resources and change NUM_NOTES 
-#define NUM_NOTES 2
+#define NUM_NOTES 13
 #define FONT_TYPE SMALL
-#define PIXELS_PER_CLICK 100
-#define PIXELS_PER_LONG_CLICK 6
+#define PIXELS_PER_CLICK 140
+#define PIXELS_PER_LONG_CLICK 100
 #define LONG_CLICK_DELAY 100
 #define PIXELS_PER_AUTO_SCROLL 3
 #define AUTO_SCROLL_DELAY 100
 #define TEXT_BUFFER_LEN 10000
-#define ALLOW_FAKE_CLOCK 1
+#define ALLOW_FAKE_CLOCK 0
 
 //More constants
 #define NUM_MENU_SECTIONS 1
@@ -418,7 +418,13 @@ void note_window_load(Window *me) {
 	
     window_set_click_config_provider(note_window, 
 									 (ClickConfigProvider)note_config_provider);
-	
+  if (persist_exists(note_selected + 2)) {
+    // Jump to saved location
+    GPoint tempoffset = scroll_layer_get_content_offset(scroll_layer);
+    tempoffset.y = persist_read_int(note_selected + 2);
+    scroll_layer_set_content_offset(scroll_layer, tempoffset, true);
+  }
+
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_load: Exiting###");
 }
 
@@ -428,6 +434,12 @@ void note_window_load(Window *me) {
 void note_window_unload(Window *me) {
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_unload: Entering###");
 	 
+  GPoint tempoffset = scroll_layer_get_content_offset(scroll_layer);
+  persist_write_int(note_selected + 2, tempoffset.y);
+  MenuIndex tempindex = menu_layer_get_selected_index(menu_layer);
+  persist_write_int(0, tempindex.section);
+  persist_write_int(1, tempindex.row);
+
 	int note_view_len = strlen(note_view);
 	for (int i=0; i<note_view_len; i++) {
       note_view[i] = 0;
@@ -476,6 +488,54 @@ uint32_t row_to_resource(int row) {
 #endif		
 #if NUM_NOTES > 9
 		case 9:    return RESOURCE_ID_NOTE9;
+#endif		
+#if NUM_NOTES > 10
+		case 10:    return RESOURCE_ID_NOTE10;
+#endif		
+#if NUM_NOTES > 11
+		case 11:    return RESOURCE_ID_NOTE11;
+#endif		
+#if NUM_NOTES > 12
+		case 12:    return RESOURCE_ID_NOTE12;
+#endif		
+#if NUM_NOTES > 13
+		case 13:    return RESOURCE_ID_NOTE13;
+#endif		
+#if NUM_NOTES > 14
+		case 14:    return RESOURCE_ID_NOTE14;
+#endif		
+#if NUM_NOTES > 15
+		case 15:    return RESOURCE_ID_NOTE15;
+#endif		
+#if NUM_NOTES > 16
+		case 16:    return RESOURCE_ID_NOTE16;
+#endif		
+#if NUM_NOTES > 17
+		case 17:    return RESOURCE_ID_NOTE17;
+#endif		
+#if NUM_NOTES > 18
+		case 18:    return RESOURCE_ID_NOTE18;
+#endif		
+#if NUM_NOTES > 19
+		case 19:    return RESOURCE_ID_NOTE19;
+#endif		
+#if NUM_NOTES > 20
+		case 20:    return RESOURCE_ID_NOTE20;
+#endif		
+#if NUM_NOTES > 21
+		case 21:    return RESOURCE_ID_NOTE21;
+#endif		
+#if NUM_NOTES > 22
+		case 22:    return RESOURCE_ID_NOTE22;
+#endif		
+#if NUM_NOTES > 23
+		case 23:    return RESOURCE_ID_NOTE23;
+#endif		
+#if NUM_NOTES > 24
+		case 24:    return RESOURCE_ID_NOTE24;
+#endif		
+#if NUM_NOTES > 25
+		case 25:    return RESOURCE_ID_NOTE25;
 #endif		
 	}
 	return RESOURCE_ID_NOTE0;
@@ -638,7 +698,15 @@ void main_window_load(Window *me) {
 	// Add it to the main_window for display
 	layer_add_child(main_window_layer, 
 					menu_layer_get_layer(menu_layer));
-			
+
+  if (persist_exists(0)) {
+    // Jump to saved row
+  MenuIndex tempindex;
+  tempindex.section = persist_read_int(0);
+  tempindex.row = persist_read_int(1);
+  menu_layer_set_selected_index(menu_layer, tempindex, MenuRowAlignCenter, false);
+  }
+	
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###main_window_load: Exiting###");
 }
 

@@ -1,17 +1,29 @@
-PebbleNotepad
-=============
-
-A notepad for pebble
-
-
-Build
+pBook
 =====
 
-- Open an account at cloudpebble.net
-- Import project from github
-- Change nedded notes. Numbering from NOTE0 to NOTE9
-- Tune parameters in section "Config this to fit your needs." in main.c
-- Build, and download to your pebble
+Self-contained offline ebooks on your pebble
+
+
+Getting started
+===============
+
+- Install Pebble SDK (tested with v4.5, should work with v3+, presumaby would work with cloudpebble)
+- Clone pBook from github
+- pebble build
+- Load to your watch and read some Washington Irving; Rip Van Winkle and The Legend of Sleepy Hollow are already baked in as a demo
+
+
+Adding your own books
+=====================
+
+- Every app is limited to 256KB of resources (128KB for OG pebble), so most books will need to be split into chunks, each of which will be embedded in its own app as follows:
+- Clone a new copy of pBook and delete all the txt files in resources/notes
+- Edit author, displayName, and name in package.json, and change the uuid (every app must have a unique uuid)
+- A "note" is limited to 10000 bytes, so the chunk must be further split into &lt;10kB files; try "split --verbose --line-bytes=10000 -a 1 --additional-suffix=.txt mybookorchunk.txt note"
+- You can have up to 26 such note files, named by default notea.txt, noteb.txt, through at most notez.txt
+- Each note file must be listed in the media array in package.json; add or remove elements as necessary, following the pattern NOTE0:notea.txt, NOTE1:noteb.txt ... NOTE25:notez.txt
+- Set NUM_NOTES in "Config this to fit your needs." in main.c equal to the number of note files
+- Build, and download to your pebble; repeat for each chunk of the book
 
 
 Usage
@@ -20,14 +32,17 @@ Usage
 - Single push up/down to advance a whole screen
 - Double push up/down to go to the top/bottom
 - Long push up/down to continouos scrolling
-- Single push select to activate/deactivate auto scrolling
-- Double push select to enter fake clock mode (Perfect for exams! :P)
+- Single push select to activate/deactivate auto scrolling (todo: adjustable scrolling rate)
+- At the end of each note, simply go back and select the next note to continue reading (todo: advance to next note)
+- Last note read and position in each note will be saved automatically on exit
 
  
 Extra
 =====
 
-If you like my work, buy me a drink https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWE8DKMCP6ENJ
+You can buy a drink for debuti, the author of the original Pebble Notepad upon which this is largely based, at https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWE8DKMCP6ENJ
+
+I'll accept tips for my contribution at bitcoin address 33djsmdX8pK91zhvGeZVEKdKMB7b6Zraa4
 
 
 License
