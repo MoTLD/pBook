@@ -195,7 +195,7 @@ void up_single_click_note_window_handler(ClickRecognizerRef recognizer, void *co
 	offset.y = offset.y + PIXELS_PER_CLICK;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 true);
+									 false);
 }
 
   /**
@@ -207,7 +207,7 @@ void down_single_click_note_window_handler(ClickRecognizerRef recognizer, void *
 	offset.y = offset.y - PIXELS_PER_CLICK;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 true);
+									 false);
 }
 
   /**
@@ -219,7 +219,7 @@ void up_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *con
 	offset.y = 0;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 true);
+									 false);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###up_multi_click_note_window_handler: Exiting###");
 }	
 
@@ -233,7 +233,7 @@ void down_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *c
 	offset.y = -1 * size.h;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 true);
+									 false);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###down_multi_click_note_window_handler: Exiting###");
 }	
 
@@ -422,7 +422,7 @@ void note_window_load(Window *me) {
     // Jump to saved location
     GPoint tempoffset = scroll_layer_get_content_offset(scroll_layer);
     tempoffset.y = persist_read_int(note_selected + 2);
-    scroll_layer_set_content_offset(scroll_layer, tempoffset, true);
+    scroll_layer_set_content_offset(scroll_layer, tempoffset, false);
   }
 
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_load: Exiting###");
