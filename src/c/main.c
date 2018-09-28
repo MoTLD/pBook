@@ -420,7 +420,8 @@ void note_window_load(Window *me) {
 									 (ClickConfigProvider)note_config_provider);
   if (persist_exists(note_selected + 2)) {
     // Jump to saved location
-    GPoint tempoffset = scroll_layer_get_content_offset(scroll_layer);
+    GPoint tempoffset;
+    tempoffset.x = 0;
     tempoffset.y = persist_read_int(note_selected + 2);
     scroll_layer_set_content_offset(scroll_layer, tempoffset, false);
   }
