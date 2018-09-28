@@ -31,8 +31,8 @@ Usage
 - Select the needed note
 - Single push up/down to advance a whole screen
 - Double push up/down to go to the top/bottom
-- Long push up/down to continouos scrolling
-- Single push select to activate/deactivate auto scrolling (todo: adjustable scrolling rate)
+- Long push up/down for fast scrolling
+- Single push select to activate/deactivate continuous scrolling (todo: adjustable scrolling rate)
 - At the end of each note, simply go back and select the next note to continue reading (todo: advance to next note)
 - Last note read and position in each note will be saved automatically on exit
 
