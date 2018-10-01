@@ -47,7 +47,7 @@
 // Remember to add the resources and change NUM_NOTES 
 #define NUM_NOTES 13
 #define FONT_TYPE SMALL
-#define PIXELS_PER_CLICK 140
+#define PIXELS_PER_CLICK 168
 #define PIXELS_PER_LONG_CLICK 100
 #define LONG_CLICK_DELAY 100
 #define PIXELS_PER_AUTO_SCROLL 3
@@ -219,7 +219,7 @@ void up_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *con
 	offset.y = 0;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 false);
+									 true);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###up_multi_click_note_window_handler: Exiting###");
 }	
 
@@ -233,7 +233,7 @@ void down_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *c
 	offset.y = -1 * size.h;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 false);
+									 true);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###down_multi_click_note_window_handler: Exiting###");
 }	
 
@@ -405,6 +405,7 @@ void note_window_load(Window *me) {
     const int vert_scroll_text_padding = 4;
 	scroll_layer_set_content_size(scroll_layer, 
 								  GSize(144, max_size.h + vert_scroll_text_padding));
+  scroll_layer_set_shadow_hidden(scroll_layer, true);
 	
 	// Add the layers for display
 	scroll_layer_add_child(scroll_layer, 
@@ -418,13 +419,9 @@ void note_window_load(Window *me) {
 	
     window_set_click_config_provider(note_window, 
 									 (ClickConfigProvider)note_config_provider);
-  if (persist_exists(note_selected + 2)) {
+
     // Jump to saved location
-    GPoint tempoffset;
-    tempoffset.x = 0;
-    tempoffset.y = persist_read_int(note_selected + 2);
-    scroll_layer_set_content_offset(scroll_layer, tempoffset, false);
-  }
+  if (persist_exists(note_selected + 2)) scroll_layer_set_content_offset(scroll_layer, GPoint(0,persist_read_int(note_selected + 2)), true);
 
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_load: Exiting###");
 }
@@ -435,11 +432,10 @@ void note_window_load(Window *me) {
 void note_window_unload(Window *me) {
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_unload: Entering###");
 	 
-  GPoint tempoffset = scroll_layer_get_content_offset(scroll_layer);
-  persist_write_int(note_selected + 2, tempoffset.y);
   MenuIndex tempindex = menu_layer_get_selected_index(menu_layer);
   persist_write_int(0, tempindex.section);
   persist_write_int(1, tempindex.row);
+  persist_write_int(note_selected + 2, scroll_layer_get_content_offset(scroll_layer).y);
 
 	int note_view_len = strlen(note_view);
 	for (int i=0; i<note_view_len; i++) {
@@ -700,13 +696,9 @@ void main_window_load(Window *me) {
 	layer_add_child(main_window_layer, 
 					menu_layer_get_layer(menu_layer));
 
-  if (persist_exists(0)) {
+
     // Jump to saved row
-  MenuIndex tempindex;
-  tempindex.section = persist_read_int(0);
-  tempindex.row = persist_read_int(1);
-  menu_layer_set_selected_index(menu_layer, tempindex, MenuRowAlignCenter, false);
-  }
+  if (persist_exists(0)) menu_layer_set_selected_index(menu_layer, MenuIndex(persist_read_int(0),persist_read_int(1)), MenuRowAlignCenter, false);
 	
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###main_window_load: Exiting###");
 }
