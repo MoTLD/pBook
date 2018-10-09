@@ -151,7 +151,7 @@ static int decompress_file(const char *packedname, const char *newname)
 	unsigned int insize, outsize;
 	clock_t clocks;
 	byte *data, *packed;
-	unsigned int depackedsize;
+//	unsigned int depackedsize;
 
 	/* open input file */
 	if ((packedfile = fopen(packedname, "rb")) == NULL) {
@@ -175,15 +175,15 @@ static int decompress_file(const char *packedname, const char *newname)
 		return 1;
 	}
 
-	depackedsize = aPsafe_get_orig_size(packed);
+//	depackedsize = aPsafe_get_orig_size(packed);
 
-	if (depackedsize == APLIB_ERROR) {
-		printf("\nERR: compressed data error\n");
-		return 1;
-	}
+//	if (depackedsize == APLIB_ERROR) {
+//		printf("\nERR: compressed data error\n");
+//		return 1;
+//	}
 
 	/* allocate memory */
-	if ((data = (byte *) malloc(depackedsize)) == NULL) {
+	if ((data = (byte *) malloc(insize*25)) == NULL) {
 		printf("\nERR: not enough memory\n");
 		return 1;
 	}
@@ -191,15 +191,15 @@ static int decompress_file(const char *packedname, const char *newname)
 	clocks = clock();
 
 	/* decompress data */
-	outsize = aPsafe_depack(packed, insize, data, depackedsize);
+	outsize = aP_depack_asm_fast(packed, data);
 
 	clocks = clock() - clocks;
 
 	/* check for decompression error */
-	if (outsize != depackedsize) {
-		printf("\nERR: an error occured while decompressing\n");
-		return 1;
-	}
+//	if (outsize != depackedsize) {
+//		printf("\nERR: an error occured while decompressing\n");
+//		return 1;
+//	}
 
 	/* create output file */
 	if ((newfile = fopen(newname, "wb")) == NULL) {
