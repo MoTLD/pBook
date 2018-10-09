@@ -20,7 +20,7 @@ Adding your own books
 - Clone a new copy of pBook and delete all the txt and/or txt.apraw files in resources/notes
 - Edit author, displayName, and name in package.json, and change the uuid (every app must have a unique uuid)
 - A "note" is limited by default to 10000 bytes, so the chunk must be further split into &lt;10kB files; try "split --verbose --line-bytes=10000 -a 1 --additional-suffix=.txt mybookorchunk.txt note"
-- Each note must be compressed using the modified appack compressor in the resources folder; try "for f in note*.txt; do ./appack c \"$f\" \"$f.apraw\"; done;"
+- Each note must be compressed using the modified appack compressor in the resources folder; try "for f in note*.txt; do ./appack c "$f" "$f.apraw"; done;"
 - Notes larger than 10kB load and change pages a little more slowly, but compress better. I've successfully tested sizes up to 30kB with compression (and up to 50kB before I added compression) on a Pebble 2. Change TEXT\_BUFFER\_LEN in main.c and adjust --line-bytes in the split command to match.
 - You can have up to 26 note files, named by default notea.txt, noteb.txt, through at most notez.txt
 - Each note file must be listed in the media array in package.json; add or remove elements as necessary, following the pattern NOTE0:notea.txt, NOTE1:noteb.txt ... NOTE25:notez.txt
