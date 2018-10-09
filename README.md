@@ -16,14 +16,16 @@ Getting started
 Adding your own books
 =====================
 
-- Every app is limited to 256KB of resources (128KB for OG pebble), so most books will need to be split into chunks, each of which will be embedded in its own app as follows:
-- Clone a new copy of pBook and delete all the txt files in resources/notes
+- Every app is limited to 256KB of resources after compression (128KB for OG pebble), so some books may need to be split into chunks, each of which will be embedded in its own app as follows:
+- Clone a new copy of pBook and delete all the txt and/or txt.apraw files in resources/notes
 - Edit author, displayName, and name in package.json, and change the uuid (every app must have a unique uuid)
-- A "note" is currently limited to 10000 bytes, so the chunk must be further split into &lt;10kB files; try "split --verbose --line-bytes=10000 -a 1 --additional-suffix=.txt mybookorchunk.txt note"
-- You can have up to 26 such note files, named by default notea.txt, noteb.txt, through at most notez.txt
+- A "note" is limited by default to 10000 bytes, so the chunk must be further split into &lt;10kB files; try "split --verbose --line-bytes=10000 -a 1 --additional-suffix=.txt mybookorchunk.txt note"
+- Each note must be compressed using the modified appack compressor in the resources folder; try "for f in note*.txt; do ./appack c \"$f\" \"$f.apraw\"; done;"
+- Notes larger than 10kB load and change pages a little more slowly, but compress better. I've successfully tested sizes up to 30kB with compression (and up to 50kB before I added compression) on a Pebble 2. Change TEXT\_BUFFER\_LEN in main.c and adjust --line-bytes in the split command to match.
+- You can have up to 26 note files, named by default notea.txt, noteb.txt, through at most notez.txt
 - Each note file must be listed in the media array in package.json; add or remove elements as necessary, following the pattern NOTE0:notea.txt, NOTE1:noteb.txt ... NOTE25:notez.txt
 - Set NUM_NOTES in "Config this to fit your needs." in main.c equal to the number of note files
-- Build, and download to your pebble; repeat for each chunk of the book
+- Build, and download to your pebble; repeat for each chunk of the book if necessary
 
 
 Usage
@@ -35,6 +37,11 @@ Usage
 - Single push select to activate/deactivate continuous scrolling (todo: adjustable scrolling rate)
 - At the end of each note, simply go back and select the next note to continue reading (todo: advance to next note)
 - Last note read and position in each note will be saved automatically on exit
+
+
+Known Issues
+============
+- Note menu previews are broken because I need to adapt them to compressed resources, but doesn't seem to affect functionality otherwise so not a high priority, sorry.
 
  
 Extra
