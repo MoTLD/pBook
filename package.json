@@ -19,67 +19,67 @@
         {
           "type": "raw",
           "name": "NOTE0",
-          "file": "notes/notea.txt"
+          "file": "notes/notea.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE1",
-          "file": "notes/noteb.txt"
+          "file": "notes/noteb.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE2",
-          "file": "notes/notec.txt"
+          "file": "notes/notec.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE3",
-          "file": "notes/noted.txt"
+          "file": "notes/noted.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE4",
-          "file": "notes/notee.txt"
+          "file": "notes/notee.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE5",
-          "file": "notes/notef.txt"
+          "file": "notes/notef.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE6",
-          "file": "notes/noteg.txt"
+          "file": "notes/noteg.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE7",
-          "file": "notes/noteh.txt"
+          "file": "notes/noteh.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE8",
-          "file": "notes/notei.txt"
+          "file": "notes/notei.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE9",
-          "file": "notes/notej.txt"
+          "file": "notes/notej.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE10",
-          "file": "notes/notek.txt"
+          "file": "notes/notek.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE11",
-          "file": "notes/notel.txt"
+          "file": "notes/notel.txt.apraw"
         },
         {
           "type": "raw",
           "name": "NOTE12",
-          "file": "notes/notem.txt"
+          "file": "notes/notem.txt.apraw"
         }
       ]
     },

@@ -33,6 +33,7 @@
 #include "pebble.h"
 #include <time.h>
 #include "pebble-log.h"
+#include "depack.h"
 	
 ///////////////////////////DECLARATIONS///////////////////////////
 //CONSTANTS
@@ -87,8 +88,6 @@ TextLayer *clock_text;
 #define TIME_STR_BUFFER_BYTES 32
 char s_time_str_buffer[TIME_STR_BUFFER_BYTES];
 int state_machine = 0; //UP+DOWN+UP+DOWN+SELECT to exit clock
-
-
 
 
 
@@ -377,16 +376,24 @@ void note_window_load(Window *me) {
 	// Initialize the text layer and load text
 	text_layer = text_layer_create(max_text_bounds);
 	
-	note_selected_size = resource_size(resource_get_handle(note_selected));
-	if (TEXT_BUFFER_LEN < note_selected_size) note_selected_size = TEXT_BUFFER_LEN;
-	note_selected_size = resource_load(resource_get_handle(note_selected),
-									   (uint8_t*)note_view,
-									   note_selected_size);
-	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_load: Readed resource bytes: %d ###", note_selected_size);
+//	note_selected_size = resource_size(resource_get_handle(note_selected));
+//	if (TEXT_BUFFER_LEN < note_selected_size) note_selected_size = TEXT_BUFFER_LEN;
+//	note_selected_size = resource_load(resource_get_handle(note_selected),
+//									   (uint8_t*)note_view,
+//									   note_selected_size);
+
+  size_t inbuffersize = resource_size(resource_get_handle(note_selected));
+  uint8_t *inbuffer = (uint8_t*)malloc(inbuffersize);
+  resource_load(resource_get_handle(note_selected), inbuffer, inbuffersize);
+  aP_depack(inbuffer, (uint8_t*)note_view);
+  note_selected_size = strlen(note_view);
+  free(inbuffer);
+  inbuffersize = 0;
 	
 	//Transform 0x0d 0x0a to 0x20 0x\n
 	//text_transform(note_view);
-	
+
+
 	//Set text to the layer
 	text_layer_set_text(text_layer, 
 						note_view);
