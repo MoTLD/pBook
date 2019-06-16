@@ -70,6 +70,11 @@
           "type": "raw",
           "name": "NOTE10",
           "file": "notes/notek.txt.apraw"
+        },
+        {
+          "type": "raw",
+          "name": "NOTE11",
+          "file": "notes/notel.txt.apraw"
         }
       ]
     },

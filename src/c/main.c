@@ -46,7 +46,7 @@
 	
 //Config this to fit your needs. 
 // Remember to add the resources and change NUM_NOTES 
-#define NUM_NOTES 11
+#define NUM_NOTES 12
 #define SECTION 0
 #define SECTIONS 1
 #define TITLE "Washington Irving"
