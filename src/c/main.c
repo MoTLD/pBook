@@ -46,14 +46,17 @@
 	
 //Config this to fit your needs. 
 // Remember to add the resources and change NUM_NOTES 
-#define NUM_NOTES 13
+#define NUM_NOTES 11
+#define SECTION 0
+#define SECTIONS 1
+#define TITLE "Washington Irving"
 #define FONT_TYPE SMALL
 #define PIXELS_PER_CLICK 168
 #define PIXELS_PER_LONG_CLICK 100
 #define LONG_CLICK_DELAY 100
-#define PIXELS_PER_AUTO_SCROLL 3
+#define PIXELS_PER_AUTO_SCROLL 1
 #define AUTO_SCROLL_DELAY 100
-#define TEXT_BUFFER_LEN 10000
+#define TEXT_BUFFER_LEN 10742
 #define ALLOW_FAKE_CLOCK 0
 
 //More constants
@@ -192,6 +195,7 @@ void up_single_click_note_window_handler(ClickRecognizerRef recognizer, void *co
 	GPoint offset = scroll_layer_get_content_offset(scroll_layer);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###up_single_click_note_window_handler: offset.y %d###", offset.y);
 	offset.y = offset.y + PIXELS_PER_CLICK;
+	if (offset.y > -3) offset.y = -3;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
 									 false);
@@ -215,10 +219,10 @@ void down_single_click_note_window_handler(ClickRecognizerRef recognizer, void *
 void up_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *context) {
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###up_multi_click_note_window_handler: Entering###");
 	GPoint offset = scroll_layer_get_content_offset(scroll_layer);
-	offset.y = 0;
+	offset.y = -3;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 true);
+									 false);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###up_multi_click_note_window_handler: Exiting###");
 }	
 
@@ -232,7 +236,7 @@ void down_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *c
 	offset.y = -1 * size.h;
 	scroll_layer_set_content_offset	(scroll_layer,
 									 offset,
-									 true);
+									 false);
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###down_multi_click_note_window_handler: Exiting###");
 }	
 
@@ -254,7 +258,7 @@ void handle_timer(void *data) {
 		if (cookie == DOWN) {		
 			offset.y = offset.y - PIXELS_PER_LONG_CLICK;
 		}
-	
+		if (offset.y > -3) offset.y = -3;
 		scroll_layer_set_content_offset	(scroll_layer,
 										 offset,
 										 true);
@@ -295,11 +299,18 @@ void release_long_click_note_window_handler(ClickRecognizerRef recognizer, void 
 }
 
   /**
-   *  Starts/Stops autoscrolling
+   *  Starts/Stops autoscrolling      Never mind autoscrolling, scrolls down PIXELS_PER_AUTO_SCROLL pixels
    */
 void select_single_click_note_window_handler(ClickRecognizerRef recognizer, void *context) {
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###select_single_click_note_window_handler: auto_scroll_running %d###", auto_scroll_running);
-	auto_scroll_running = !auto_scroll_running;
+
+		GPoint offset = scroll_layer_get_content_offset(scroll_layer);
+		offset.y = offset.y - PIXELS_PER_AUTO_SCROLL;
+		scroll_layer_set_content_offset	(scroll_layer,
+										 offset,
+										 false);
+
+/*	auto_scroll_running = !auto_scroll_running;
 	if (auto_scroll_running) {
 		//window_set_status_bar_icon(&note_window,
 		//							 AUTO );
@@ -310,13 +321,21 @@ void select_single_click_note_window_handler(ClickRecognizerRef recognizer, void
 		//							 NORMAL );
 		app_timer_cancel(timer_handle);
 	}
+*/
 }
 
   /**
-   *  If enabled, goes to fake clock (tm)
+   *  If enabled, goes to fake clock (tm)    Never mind the fake clock, scrolls up PIXELS_PER_AUTO_SCROLL pixels
    */
 void select_multi_click_note_window_handler(ClickRecognizerRef recognizer, void *context) {
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###select_multi_click_note_window_handler: Entering###");
+
+		GPoint offset = scroll_layer_get_content_offset(scroll_layer);
+		offset.y = offset.y + PIXELS_PER_AUTO_SCROLL;
+		scroll_layer_set_content_offset	(scroll_layer,
+										 offset,
+										 false);
+
 		
 #if ALLOW_FAKE_CLOCK == 1
 	// Format and push window
@@ -427,8 +446,11 @@ void note_window_load(Window *me) {
     window_set_click_config_provider(note_window, 
 									 (ClickConfigProvider)note_config_provider);
 
+    // Jump down 3 rows to fix text wrapping below page
+  scroll_layer_set_content_offset(scroll_layer, GPoint(0,-3), false);
+
     // Jump to saved location
-  if (persist_exists(note_selected + 2)) scroll_layer_set_content_offset(scroll_layer, GPoint(0,persist_read_int(note_selected + 2)), true);
+  if (persist_exists(note_selected + 2)) scroll_layer_set_content_offset(scroll_layer, GPoint(0,persist_read_int(note_selected + 2)), false);
 
 	app_log(APP_LOG_LEVEL_DEBUG, "main.c", 0, "###note_window_load: Exiting###");
 }
@@ -588,7 +610,7 @@ void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t 
             // Draw title text in the section header
             menu_cell_basic_header_draw(ctx,
 										cell_layer, 
-										"Your notes");
+										TITLE);
             break;
 	}
 }
@@ -614,25 +636,45 @@ void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *c
 				// Retrieve resource
 				resource_load(resource_get_handle(resource_name),
 							  (uint8_t*)read_buffer,
-							  TITLE_BUFFER_LEN);	
+							  TITLE_BUFFER_LEN);
+
+/* failed, aborted attempt at decompressing for preview, will probably just make first 30 bytes uncompressed and reinstate old preview...
+  #define OUTBUFFERLEN 600
+  size_t inbuffersize = resource_size(resource_get_handle(resource_name));
+  uint8_t *inbuffer = (uint8_t*)malloc(inbuffersize);
+  char outbuffer[OUTBUFFERLEN];
+  resource_load(resource_get_handle(resource_name), inbuffer, inbuffersize);
+  aP_depack(inbuffer, (uint8_t*)outbuffer);
+  free(inbuffer);
+  inbuffersize = 0;
+  for (int i=0; i<TITLE_BUFFER_LEN; i++) {
+    read_buffer[i] = outbuffer[i];
+  }
+  int outbufferlen = strlen(outbuffer);
+  for (int i=0; i<outbufferlen; i++) {
+    outbuffer[i] = 0;
+  }
+  outbufferlen = 0;
+*/
 				
 				// mini_snprintf to add endline character to note_preview
 				mini_snprintf(note_preview, 
-							  TITLE_BUFFER_LEN, 
-							  "%s", 
-							  read_buffer);
+							  TITLE_BUFFER_LEN,
+							  /*"%s"*/"%dB compressed", 
+							  /*read_buffer*/resource_size(resource_get_handle(resource_name)));
+
 	
 				// mini_snprintf to add endline character and format to note_title
 				mini_snprintf(note_title, 
 							  TITLE_BUFFER_LEN, 
-							  "Note %d (%dB)", 
-							  cell_index->row,
-							  resource_size(resource_get_handle(resource_name)));
+							  "Part %d of %d", 
+							  (cell_index->row)+1+(NUM_NOTES*SECTION),
+							  NUM_NOTES*SECTIONS);
 				
 				menu_cell_basic_draw(ctx, 
 									 cell_layer, 
-									 note_title, 
-									 note_preview, 
+									 note_title,
+									 note_preview,
 									 NULL);
 		    }
             break;

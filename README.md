@@ -36,7 +36,7 @@ Usage
 - Long push up/down for fast scrolling
 - Single push select to activate/deactivate continuous scrolling (todo: adjustable scrolling rate)
 - At the end of each note, simply go back and select the next note to continue reading (todo: advance to next note)
-- Last note read and position in each note will be saved automatically on exit
+- Last note read and position in each note are saved automatically on exit
 
 
 Known Issues
@@ -50,6 +50,14 @@ Extra
 You can buy a drink for debuti, the author of the original Pebble Notepad upon which this is largely based, at https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZWE8DKMCP6ENJ
 
 I'll accept tips for my contribution at bitcoin address 33djsmdX8pK91zhvGeZVEKdKMB7b6Zraa4
+
+
+Acknowledgments
+===============
+
+    This product uses the aPLib compression library,
+    Copyright (c) 1998-2014 Joergen Ibsen, All Rights Reserved.
+    For more information, please visit: http://www.ibsensoftware.com/
 
 
 License
